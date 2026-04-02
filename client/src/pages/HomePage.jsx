@@ -8,10 +8,6 @@ export default function HomePage() {
         <div>
             <div className="page-head">
                 <h2 className="page-title">Знайди потрібний ресурс або створи власну анкету</h2>
-                <p className="page-subtitle">
-                    Це головна сторінка ресурсного центру. Тут можна зробити приємний, не надто
-                    яскравий інтерфейс із м’якими картками, теплим фоном і акуратною навігацією.
-                </p>
             </div>
 
             <div className="hero-grid">
@@ -25,10 +21,11 @@ export default function HomePage() {
                     </ul>
 
                     <div className="button-row section-space">
-                        <Link to="/tutors" className="btn btn-primary">
+                        <Link to="/listings" className="btn btn-primary">
                             Переглянути анкети
                         </Link>
-                        <Link to="/add-profile" className="btn btn-secondary">
+
+                        <Link to="/add-listing" className="btn btn-secondary">
                             Додати анкету
                         </Link>
                     </div>
@@ -36,15 +33,17 @@ export default function HomePage() {
 
                 <aside className="card card-soft">
                     <h3 className="mini-title">Поточний стан входу</h3>
+
                     {user ? (
                         <>
                             <p>
-                                У системі зараз увійшов:
+                                У системі зараз увійшли:
                                 <br />
                                 <strong>
                                     {user.firstName} {user.lastName}
                                 </strong>
                             </p>
+
                             <div className="meta-row">
                                 <span className="badge badge-active">{user.role}</span>
                                 <span className="badge badge-warning">{user.email}</span>
@@ -61,9 +60,10 @@ export default function HomePage() {
                     <article className="card tutor-card">
                         <h3>Перегляд анкет</h3>
                         <p className="muted">
-                            Користувач бачить активні анкети та може знайти потрібного фахівця.
+                            Користувач бачить активні анкети та може знайти потрібний варіант.
                         </p>
-                        <Link to="/tutors" className="btn btn-ghost">
+
+                        <Link to="/listings" className="btn btn-ghost">
                             Відкрити
                         </Link>
                     </article>
@@ -73,7 +73,8 @@ export default function HomePage() {
                         <p className="muted">
                             Авторизований користувач може створити власну анкету через форму.
                         </p>
-                        <Link to="/add-profile" className="btn btn-ghost">
+
+                        <Link to="/add-listing" className="btn btn-ghost">
                             Перейти
                         </Link>
                     </article>
@@ -81,8 +82,9 @@ export default function HomePage() {
                     <article className="card tutor-card">
                         <h3>Адміністрування</h3>
                         <p className="muted">
-                            Адміністратор керує контентом, предметами, користувачами та статусами.
+                            Адміністратор керує контентом, користувачами та статусами.
                         </p>
+
                         <Link to="/admin" className="btn btn-ghost">
                             В адмінку
                         </Link>

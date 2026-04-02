@@ -1,14 +1,20 @@
 import { useState } from 'react';
+import { registerUser } from '../services/authService';
+
+const emptyForm = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+};
 
 export default function RegisterPage() {
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-    });
-
+    const [formData, setFormData] = useState(emptyForm);
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState('');
+    const [submitError, setSubmitError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const validate = () => {
         const nextErrors = {};
@@ -27,6 +33,18 @@ export default function RegisterPage() {
             nextErrors.email = 'Некоректний email';
         }
 
+        if (!formData.password.trim()) {
+            nextErrors.password = "Пароль обов'язковий";
+        } else if (formData.password.length < 6) {
+            nextErrors.password = 'Пароль має містити щонайменше 6 символів';
+        }
+
+        if (!formData.confirmPassword.trim()) {
+            nextErrors.confirmPassword = "Підтвердження пароля обов'язкове";
+        } else if (formData.password !== formData.confirmPassword) {
+            nextErrors.confirmPassword = 'Паролі не співпадають';
+        }
+
         return nextErrors;
     };
 
@@ -37,18 +55,38 @@ export default function RegisterPage() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const nextErrors = validate();
         setErrors(nextErrors);
+        setMessage('');
+        setSubmitError('');
 
         if (Object.keys(nextErrors).length > 0) {
-            setMessage('');
             return;
         }
 
-        setMessage('Клієнтська валідація пройдена. Далі сюди підключимо реєстрацію через бекенд.');
+        try {
+            setIsSubmitting(true);
+
+            const data = await registerUser({
+                firstName: formData.firstName.trim(),
+                lastName: formData.lastName.trim(),
+                email: formData.email.trim(),
+                password: formData.password,
+            });
+
+            setMessage(
+                data.message ||
+                'Реєстрація успішна. Перевірте пошту та підтвердьте email.'
+            );
+            setFormData(emptyForm);
+        } catch (err) {
+            setSubmitError(err.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -56,7 +94,7 @@ export default function RegisterPage() {
             <div className="page-head">
                 <h2 className="page-title">Реєстрація</h2>
                 <p className="page-subtitle">
-                    Базова форма з валідацією найважливіших полів.
+                    Створіть акаунт і підтвердьте email, щоб увійти в систему.
                 </p>
             </div>
 
@@ -99,12 +137,41 @@ export default function RegisterPage() {
                     {errors.email && <p className="error-text">{errors.email}</p>}
                 </div>
 
+                <div className="grid-2 section-space">
+                    <div className="field-group">
+                        <label className="field-label">Пароль</label>
+                        <input
+                            className="input"
+                            type="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                        {errors.password && <p className="error-text">{errors.password}</p>}
+                    </div>
+
+                    <div className="field-group">
+                        <label className="field-label">Підтвердіть пароль</label>
+                        <input
+                            className="input"
+                            type="password"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                        />
+                        {errors.confirmPassword && (
+                            <p className="error-text">{errors.confirmPassword}</p>
+                        )}
+                    </div>
+                </div>
+
                 <div className="button-row section-space">
-                    <button type="submit" className="btn btn-primary">
-                        Зареєструватися
+                    <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                        {isSubmitting ? 'Реєстрація...' : 'Зареєструватися'}
                     </button>
                 </div>
 
+                {submitError && <p className="error-text">{submitError}</p>}
                 {message && <div className="success-box">{message}</div>}
             </form>
         </div>

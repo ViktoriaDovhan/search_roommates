@@ -1,53 +1,44 @@
-import { useMemo, useState } from 'react';
-
-const initialListings = [
-    {
-        id: 1,
-        title: 'Шукаю сусідку в 2-кімнатну квартиру',
-        city: 'Київ',
-        district: 'Оболонь',
-        price: 8000,
-        genderPreference: 'female',
-        description: 'Окрема кімната, поруч метро, без тварин.',
-        isActive: true,
-    },
-    {
-        id: 2,
-        title: 'Шукаю сусіда для спільної оренди',
-        city: 'Львів',
-        district: 'Сихів',
-        price: 6500,
-        genderPreference: 'male',
-        description: 'Спокійний район, новий ремонт.',
-        isActive: true,
-    },
-    {
-        id: 3,
-        title: 'Кімната для сусіда або сусідки',
-        city: 'Харків',
-        district: 'Салтівка',
-        price: 5000,
-        genderPreference: 'any',
-        description: 'Можна студентам, є пральна машина й Wi-Fi.',
-        isActive: false,
-    },
-];
+import { useEffect, useState } from 'react';
+import { getPublicListings } from '../services/listingsService';
 
 export default function ListingsPage() {
     const [search, setSearch] = useState('');
     const [gender, setGender] = useState('');
+    const [listings, setListings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    const visibleListings = useMemo(() => {
-        return initialListings.filter((listing) => {
-            const matchesSearch =
-                listing.title.toLowerCase().includes(search.toLowerCase()) ||
-                listing.city.toLowerCase().includes(search.toLowerCase()) ||
-                listing.district.toLowerCase().includes(search.toLowerCase());
+    useEffect(() => {
+        let isCancelled = false;
 
-            const matchesGender = gender ? listing.genderPreference === gender : true;
+        const timer = setTimeout(async () => {
+            try {
+                setIsLoading(true);
+                const data = await getPublicListings({
+                    search,
+                    genderPreference: gender,
+                });
 
-            return listing.isActive && matchesSearch && matchesGender;
-        });
+                if (!isCancelled) {
+                    setListings(data);
+                    setError('');
+                }
+            } catch (err) {
+                if (!isCancelled) {
+                    setListings([]);
+                    setError(err.message);
+                }
+            } finally {
+                if (!isCancelled) {
+                    setIsLoading(false);
+                }
+            }
+        }, 300);
+
+        return () => {
+            isCancelled = true;
+            clearTimeout(timer);
+        };
     }, [search, gender]);
 
     return (
@@ -82,35 +73,65 @@ export default function ListingsPage() {
                 </div>
             </div>
 
-            <div className="card-grid section-space">
-                {visibleListings.map((listing) => (
-                    <article key={listing.id} className="card tutor-card">
-                        <h3>{listing.title}</h3>
-
-                        <div className="meta-row">
-                            <span className="badge badge-warning">{listing.city}</span>
-                            <span className="badge badge-warning">{listing.district}</span>
-                            <span className="badge badge-active">{listing.price} грн</span>
-                        </div>
-
-                        <p className="muted">
-                            Побажання:{" "}
-                            {listing.genderPreference === 'female'
-                                ? 'тільки дівчина'
-                                : listing.genderPreference === 'male'
-                                    ? 'тільки хлопець'
-                                    : 'без різниці'}
-                        </p>
-
-                        <p className="muted">{listing.description}</p>
-                    </article>
-                ))}
-            </div>
-
-            {visibleListings.length === 0 && (
+            {isLoading && (
                 <div className="card section-space empty-state">
-                    За цими фільтрами нічого не знайдено.
+                    Завантаження оголошень...
                 </div>
+            )}
+
+            {!isLoading && error && (
+                <div className="card section-space empty-state">
+                    {error}
+                </div>
+            )}
+
+            {!isLoading && !error && (
+                <>
+                    <div className="card-grid section-space">
+                        {listings.map((listing) => (
+                            <article key={listing.id} className="card tutor-card">
+                                <h3>{listing.title}</h3>
+
+                                <div className="meta-row">
+                                    <span className="badge badge-warning">{listing.city}</span>
+
+                                    {listing.district && (
+                                        <span className="badge badge-warning">
+                                            {listing.district}
+                                        </span>
+                                    )}
+
+                                    <span className="badge badge-active">
+                                        {listing.price} грн
+                                    </span>
+                                </div>
+
+                                <p className="muted">
+                                    Побажання:{' '}
+                                    {listing.genderPreference === 'female'
+                                        ? 'тільки дівчина'
+                                        : listing.genderPreference === 'male'
+                                            ? 'тільки хлопець'
+                                            : 'без різниці'}
+                                </p>
+
+                                {listing.User && (
+                                    <p className="muted">
+                                        Автор: {listing.User.firstName} {listing.User.lastName}
+                                    </p>
+                                )}
+
+                                <p className="muted">{listing.description}</p>
+                            </article>
+                        ))}
+                    </div>
+
+                    {listings.length === 0 && (
+                        <div className="card section-space empty-state">
+                            За цими фільтрами нічого не знайдено.
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );

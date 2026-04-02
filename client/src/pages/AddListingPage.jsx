@@ -1,17 +1,24 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createListing } from '../services/listingsService';
+
+const emptyForm = {
+    title: '',
+    city: '',
+    district: '',
+    price: '',
+    genderPreference: 'any',
+    description: '',
+};
 
 export default function AddListingPage() {
-    const [formData, setFormData] = useState({
-        title: '',
-        city: '',
-        district: '',
-        price: '',
-        genderPreference: 'any',
-        description: '',
-    });
+    const navigate = useNavigate();
 
+    const [formData, setFormData] = useState(emptyForm);
     const [errors, setErrors] = useState({});
-    const [savedData, setSavedData] = useState(null);
+    const [message, setMessage] = useState('');
+    const [submitError, setSubmitError] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const validate = () => {
         const nextErrors = {};
@@ -24,7 +31,7 @@ export default function AddListingPage() {
             nextErrors.city = "Місто обов'язкове";
         }
 
-        if (!formData.price.trim()) {
+        if (!String(formData.price).trim()) {
             nextErrors.price = "Ціна обов'язкова";
         } else if (Number(formData.price) <= 0) {
             nextErrors.price = 'Ціна має бути більшою за 0';
@@ -44,18 +51,41 @@ export default function AddListingPage() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const nextErrors = validate();
         setErrors(nextErrors);
+        setMessage('');
+        setSubmitError('');
 
         if (Object.keys(nextErrors).length > 0) {
-            setSavedData(null);
             return;
         }
 
-        setSavedData(formData);
+        try {
+            setIsSubmitting(true);
+
+            await createListing({
+                title: formData.title.trim(),
+                city: formData.city.trim(),
+                district: formData.district.trim(),
+                price: Number(formData.price),
+                genderPreference: formData.genderPreference,
+                description: formData.description.trim(),
+            });
+
+            setFormData(emptyForm);
+            setMessage('Оголошення успішно додано');
+
+            setTimeout(() => {
+                navigate('/listings');
+            }, 800);
+        } catch (err) {
+            setSubmitError(err.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -147,17 +177,13 @@ export default function AddListingPage() {
                 </div>
 
                 <div className="button-row section-space">
-                    <button type="submit" className="btn btn-primary">
-                        Зберегти
+                    <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                        {isSubmitting ? 'Збереження...' : 'Зберегти'}
                     </button>
                 </div>
 
-                {savedData && (
-                    <div className="success-box">
-                        <strong>Форма пройшла клієнтську перевірку</strong>
-                        <div className="code-block">{JSON.stringify(savedData, null, 2)}</div>
-                    </div>
-                )}
+                {submitError && <p className="error-text">{submitError}</p>}
+                {message && <div className="success-box">{message}</div>}
             </form>
         </div>
     );
