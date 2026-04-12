@@ -99,80 +99,88 @@ export default function AddListingPage() {
 
             <form className="card form-card" onSubmit={handleSubmit}>
                 <div className="field-group">
-                    <label className="field-label">Заголовок</label>
+                    <label className="field-label form-label">Заголовок</label>
                     <input
-                        className="input"
+                        className="input form-control"
                         type="text"
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
                     />
-                    {errors.title && <p className="error-text">{errors.title}</p>}
+                    {errors.title && <p className="error-text mt-2">{errors.title}</p>}
                 </div>
 
-                <div className="grid-2 section-space">
-                    <div className="field-group">
-                        <label className="field-label">Місто</label>
-                        <input
-                            className="input"
-                            type="text"
-                            name="city"
-                            value={formData.city}
-                            onChange={handleChange}
-                        />
-                        {errors.city && <p className="error-text">{errors.city}</p>}
+                <div className="row g-3 section-space">
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Місто</label>
+                            <input
+                                className="input form-control"
+                                type="text"
+                                name="city"
+                                value={formData.city}
+                                onChange={handleChange}
+                            />
+                            {errors.city && <p className="error-text mt-2">{errors.city}</p>}
+                        </div>
                     </div>
 
-                    <div className="field-group">
-                        <label className="field-label">Район</label>
-                        <input
-                            className="input"
-                            type="text"
-                            name="district"
-                            value={formData.district}
-                            onChange={handleChange}
-                        />
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Район</label>
+                            <input
+                                className="input form-control"
+                                type="text"
+                                name="district"
+                                value={formData.district}
+                                onChange={handleChange}
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <div className="grid-2 section-space">
-                    <div className="field-group">
-                        <label className="field-label">Ціна, грн</label>
-                        <input
-                            className="input"
-                            type="number"
-                            name="price"
-                            value={formData.price}
-                            onChange={handleChange}
-                        />
-                        {errors.price && <p className="error-text">{errors.price}</p>}
+                <div className="row g-3 section-space">
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Ціна, грн</label>
+                            <input
+                                className="input form-control"
+                                type="number"
+                                name="price"
+                                value={formData.price}
+                                onChange={handleChange}
+                            />
+                            {errors.price && <p className="error-text mt-2">{errors.price}</p>}
+                        </div>
                     </div>
 
-                    <div className="field-group">
-                        <label className="field-label">Побажання щодо статі</label>
-                        <select
-                            className="select"
-                            name="genderPreference"
-                            value={formData.genderPreference}
-                            onChange={handleChange}
-                        >
-                            <option value="any">Без різниці</option>
-                            <option value="female">Тільки дівчина</option>
-                            <option value="male">Тільки хлопець</option>
-                        </select>
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Побажання щодо статі</label>
+                            <select
+                                className="select form-select"
+                                name="genderPreference"
+                                value={formData.genderPreference}
+                                onChange={handleChange}
+                            >
+                                <option value="any">Без різниці</option>
+                                <option value="female">Тільки дівчина</option>
+                                <option value="male">Тільки хлопець</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div className="field-group section-space">
-                    <label className="field-label">Опис</label>
+                    <label className="field-label form-label">Опис</label>
                     <textarea
-                        className="textarea"
+                        className="textarea form-control"
                         name="description"
                         value={formData.description}
                         onChange={handleChange}
                     />
                     {errors.description && (
-                        <p className="error-text">{errors.description}</p>
+                        <p className="error-text mt-2">{errors.description}</p>
                     )}
                 </div>
 
@@ -182,8 +190,17 @@ export default function AddListingPage() {
                     </button>
                 </div>
 
-                {submitError && <p className="error-text">{submitError}</p>}
-                {message && <div className="success-box">{message}</div>}
+                {submitError && (
+                    <div className="alert alert-danger mt-3 mb-0" role="alert">
+                        {submitError}
+                    </div>
+                )}
+
+                {message && (
+                    <div className="success-box alert alert-success mt-3 mb-0" role="alert">
+                        {message}
+                    </div>
+                )}
             </form>
         </div>
     );

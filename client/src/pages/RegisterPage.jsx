@@ -99,69 +99,77 @@ export default function RegisterPage() {
             </div>
 
             <form className="card form-card" onSubmit={handleSubmit}>
-                <div className="grid-2">
-                    <div className="field-group">
-                        <label className="field-label">Ім’я</label>
-                        <input
-                            className="input"
-                            type="text"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleChange}
-                        />
-                        {errors.firstName && <p className="error-text">{errors.firstName}</p>}
+                <div className="row g-3">
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Ім’я</label>
+                            <input
+                                className="input form-control"
+                                type="text"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
+                            {errors.firstName && <p className="error-text mt-2">{errors.firstName}</p>}
+                        </div>
                     </div>
 
-                    <div className="field-group">
-                        <label className="field-label">Прізвище</label>
-                        <input
-                            className="input"
-                            type="text"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                        />
-                        {errors.lastName && <p className="error-text">{errors.lastName}</p>}
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Прізвище</label>
+                            <input
+                                className="input form-control"
+                                type="text"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
+                            {errors.lastName && <p className="error-text mt-2">{errors.lastName}</p>}
+                        </div>
                     </div>
                 </div>
 
                 <div className="field-group section-space">
-                    <label className="field-label">Email</label>
+                    <label className="field-label form-label">Email</label>
                     <input
-                        className="input"
+                        className="input form-control"
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                     />
-                    {errors.email && <p className="error-text">{errors.email}</p>}
+                    {errors.email && <p className="error-text mt-2">{errors.email}</p>}
                 </div>
 
-                <div className="grid-2 section-space">
-                    <div className="field-group">
-                        <label className="field-label">Пароль</label>
-                        <input
-                            className="input"
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                        />
-                        {errors.password && <p className="error-text">{errors.password}</p>}
+                <div className="row g-3 section-space">
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Пароль</label>
+                            <input
+                                className="input form-control"
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                            {errors.password && <p className="error-text mt-2">{errors.password}</p>}
+                        </div>
                     </div>
 
-                    <div className="field-group">
-                        <label className="field-label">Підтвердіть пароль</label>
-                        <input
-                            className="input"
-                            type="password"
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                        />
-                        {errors.confirmPassword && (
-                            <p className="error-text">{errors.confirmPassword}</p>
-                        )}
+                    <div className="col-md-6">
+                        <div className="field-group">
+                            <label className="field-label form-label">Підтвердіть пароль</label>
+                            <input
+                                className="input form-control"
+                                type="password"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                            />
+                            {errors.confirmPassword && (
+                                <p className="error-text mt-2">{errors.confirmPassword}</p>
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -171,8 +179,17 @@ export default function RegisterPage() {
                     </button>
                 </div>
 
-                {submitError && <p className="error-text">{submitError}</p>}
-                {message && <div className="success-box">{message}</div>}
+                {submitError && (
+                    <div className="alert alert-danger mt-3 mb-0" role="alert">
+                        {submitError}
+                    </div>
+                )}
+
+                {message && (
+                    <div className="success-box alert alert-success mt-3 mb-0" role="alert">
+                        {message}
+                    </div>
+                )}
             </form>
         </div>
     );

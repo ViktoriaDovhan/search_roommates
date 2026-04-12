@@ -92,3 +92,12 @@ export async function getAdminUsers() {
 
     return parseResponse(response, 'Не вдалося завантажити список користувачів');
 }
+
+export async function getAdminStats() {
+    const response = await fetch(`${LISTINGS_URL}/admin/stats`, {
+        method: 'GET',
+        credentials: 'include',
+    });
+
+    return parseResponse(response, 'Не вдалося завантажити статистику');
+}

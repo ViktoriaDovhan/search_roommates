@@ -75,13 +75,15 @@ export default function AdminListingsPage() {
             )}
 
             {!isLoading && error && (
-                <div className="card section-space empty-state">{error}</div>
+                <div className="alert alert-danger" role="alert">
+                    {error}
+                </div>
             )}
 
             {!isLoading && !error && (
                 <div className="card table-card">
                     <div className="table-wrap">
-                        <table className="data-table">
+                        <table className="data-table table table-hover align-middle mb-0">
                             <thead>
                             <tr>
                                 <th>Заголовок</th>

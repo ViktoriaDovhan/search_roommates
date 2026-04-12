@@ -1,10 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const session = require('express-session');
+const { graphqlHTTP } = require('express-graphql');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const listingsRoutes = require('./routes/listingsRoutes');
+const { schema, createRoot } = require('./graphql/schema');
 
 const app = express();
 
@@ -34,6 +36,18 @@ app.use(
 app.get('/', (req, res) => {
     res.json({ message: 'Search Roommates API is working' });
 });
+
+app.use(
+    '/graphql',
+    graphqlHTTP((req, res) => ({
+        schema,
+        rootValue: createRoot(req, res),
+        graphiql: false,
+        customFormatErrorFn: (error) => ({
+            message: error.message,
+        }),
+    }))
+);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/listings', listingsRoutes);

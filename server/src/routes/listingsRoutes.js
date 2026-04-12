@@ -8,7 +8,7 @@ const {
     toggleListingActive,
 } = require('../controllers/listingsController');
 
-const { getUsers } = require('../controllers/adminController');
+const { getUsers, getAdminStats } = require('../controllers/adminController');
 const { requireAuth, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -17,6 +17,7 @@ router.get('/', getPublicListings);
 
 router.get('/admin/all', requireAdmin, getAdminListings);
 router.get('/admin/users/all', requireAdmin, getUsers);
+router.get('/admin/stats', requireAdmin, getAdminStats);
 router.patch('/admin/:id/toggle-active', requireAdmin, toggleListingActive);
 
 router.post('/', requireAuth, createListing);

@@ -80,27 +80,27 @@ export default function LoginPage() {
 
             <form className="card form-card" onSubmit={handleSubmit}>
                 <div className="field-group">
-                    <label className="field-label">Email</label>
+                    <label className="field-label form-label">Email</label>
                     <input
-                        className="input"
+                        className="input form-control"
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
                     />
-                    {errors.email && <p className="error-text">{errors.email}</p>}
+                    {errors.email && <p className="error-text mt-2">{errors.email}</p>}
                 </div>
 
                 <div className="field-group section-space">
-                    <label className="field-label">Пароль</label>
+                    <label className="field-label form-label">Пароль</label>
                     <input
-                        className="input"
+                        className="input form-control"
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
                     />
-                    {errors.password && <p className="error-text">{errors.password}</p>}
+                    {errors.password && <p className="error-text mt-2">{errors.password}</p>}
                 </div>
 
                 <div className="button-row section-space">
@@ -109,7 +109,11 @@ export default function LoginPage() {
                     </button>
                 </div>
 
-                {submitError && <p className="error-text">{submitError}</p>}
+                {submitError && (
+                    <div className="alert alert-danger mt-3 mb-0" role="alert">
+                        {submitError}
+                    </div>
+                )}
             </form>
         </div>
     );

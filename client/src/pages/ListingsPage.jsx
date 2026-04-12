@@ -14,6 +14,7 @@ export default function ListingsPage() {
         const timer = setTimeout(async () => {
             try {
                 setIsLoading(true);
+
                 const data = await getPublicListings({
                     search,
                     genderPreference: gender,
@@ -51,25 +52,29 @@ export default function ListingsPage() {
             </div>
 
             <div className="card">
-                <div className="search-panel">
-                    <input
-                        className="input"
-                        type="text"
-                        placeholder="Пошук за містом, районом або заголовком"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+                <div className="row g-3 align-items-end">
+                    <div className="col-md-8">
+                        <input
+                            className="input form-control"
+                            type="text"
+                            placeholder="Пошук за містом, районом або заголовком"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
 
-                    <select
-                        className="select"
-                        value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                    >
-                        <option value="">Будь-яка стать</option>
-                        <option value="female">Тільки дівчина</option>
-                        <option value="male">Тільки хлопець</option>
-                        <option value="any">Без різниці</option>
-                    </select>
+                    <div className="col-md-4">
+                        <select
+                            className="select form-select"
+                            value={gender}
+                            onChange={(e) => setGender(e.target.value)}
+                        >
+                            <option value="">Будь-яка стать</option>
+                            <option value="female">Тільки дівчина</option>
+                            <option value="male">Тільки хлопець</option>
+                            <option value="any">Без різниці</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -87,42 +92,44 @@ export default function ListingsPage() {
 
             {!isLoading && !error && (
                 <>
-                    <div className="card-grid section-space">
+                    <div className="row g-4 section-space">
                         {listings.map((listing) => (
-                            <article key={listing.id} className="card tutor-card">
-                                <h3>{listing.title}</h3>
+                            <div key={listing.id} className="col-lg-4 col-md-6">
+                                <article className="card tutor-card h-100">
+                                    <h3>{listing.title}</h3>
 
-                                <div className="meta-row">
-                                    <span className="badge badge-warning">{listing.city}</span>
+                                    <div className="meta-row">
+                                        <span className="badge badge-warning">{listing.city}</span>
 
-                                    {listing.district && (
-                                        <span className="badge badge-warning">
-                                            {listing.district}
+                                        {listing.district && (
+                                            <span className="badge badge-warning">
+                                                {listing.district}
+                                            </span>
+                                        )}
+
+                                        <span className="badge badge-active">
+                                            {listing.price} грн
                                         </span>
+                                    </div>
+
+                                    <p className="muted">
+                                        Побажання:{' '}
+                                        {listing.genderPreference === 'female'
+                                            ? 'тільки дівчина'
+                                            : listing.genderPreference === 'male'
+                                                ? 'тільки хлопець'
+                                                : 'без різниці'}
+                                    </p>
+
+                                    {listing.User && (
+                                        <p className="muted">
+                                            Автор: {listing.User.firstName} {listing.User.lastName}
+                                        </p>
                                     )}
 
-                                    <span className="badge badge-active">
-                                        {listing.price} грн
-                                    </span>
-                                </div>
-
-                                <p className="muted">
-                                    Побажання:{' '}
-                                    {listing.genderPreference === 'female'
-                                        ? 'тільки дівчина'
-                                        : listing.genderPreference === 'male'
-                                            ? 'тільки хлопець'
-                                            : 'без різниці'}
-                                </p>
-
-                                {listing.User && (
-                                    <p className="muted">
-                                        Автор: {listing.User.firstName} {listing.User.lastName}
-                                    </p>
-                                )}
-
-                                <p className="muted">{listing.description}</p>
-                            </article>
+                                    <p className="muted mb-0">{listing.description}</p>
+                                </article>
+                            </div>
                         ))}
                     </div>
 
