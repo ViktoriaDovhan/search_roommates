@@ -1,103 +1,85 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
-const LISTINGS_URL = `${API_BASE_URL}/api/listings`;
+import { getApiMode } from './apiMode';
+import {
+    getPublicListingsRest,
+    createListingRest,
+    updateListingRest,
+    deleteListingRest,
+    getAdminListingsRest,
+    toggleListingActiveRest,
+    getAdminUsersRest,
+    getAdminStatsRest,
+} from './listingsRestService';
+import {
+    getPublicListingsGraphql,
+    createListingGraphql,
+    updateListingGraphql,
+    deleteListingGraphql,
+    getAdminListingsGraphql,
+    toggleListingActiveGraphql,
+    getAdminUsersGraphql,
+    getAdminStatsGraphql,
+} from './listingsGraphqlService';
 
-function buildQuery(params) {
-    const searchParams = new URLSearchParams();
-
-    Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined && value !== null && value !== '') {
-            searchParams.append(key, value);
-        }
-    });
-
-    const queryString = searchParams.toString();
-    return queryString ? `?${queryString}` : '';
-}
-
-async function parseResponse(response, defaultMessage) {
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(data.message || defaultMessage);
+export async function getPublicListings(filters = {}) {
+    if (getApiMode() === 'graphql') {
+        return getPublicListingsGraphql(filters);
     }
 
-    return data;
-}
-
-export async function getPublicListings({ search = '', genderPreference = '' } = {}) {
-    const query = buildQuery({ search, genderPreference });
-
-    const response = await fetch(`${LISTINGS_URL}${query}`, {
-        method: 'GET',
-        credentials: 'include',
-    });
-
-    return parseResponse(response, 'Не вдалося завантажити оголошення');
+    return getPublicListingsRest(filters);
 }
 
 export async function createListing(formData) {
-    const response = await fetch(LISTINGS_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-    });
+    if (getApiMode() === 'graphql') {
+        return createListingGraphql(formData);
+    }
 
-    return parseResponse(response, 'Не вдалося створити оголошення');
+    return createListingRest(formData);
 }
 
 export async function updateListing(id, formData) {
-    const response = await fetch(`${LISTINGS_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(formData),
-    });
+    if (getApiMode() === 'graphql') {
+        return updateListingGraphql(id, formData);
+    }
 
-    return parseResponse(response, 'Не вдалося оновити оголошення');
+    return updateListingRest(id, formData);
 }
 
 export async function deleteListing(id) {
-    const response = await fetch(`${LISTINGS_URL}/${id}`, {
-        method: 'DELETE',
-        credentials: 'include',
-    });
+    if (getApiMode() === 'graphql') {
+        return deleteListingGraphql(id);
+    }
 
-    return parseResponse(response, 'Не вдалося видалити оголошення');
+    return deleteListingRest(id);
 }
 
 export async function getAdminListings() {
-    const response = await fetch(`${LISTINGS_URL}/admin/all`, {
-        method: 'GET',
-        credentials: 'include',
-    });
+    if (getApiMode() === 'graphql') {
+        return getAdminListingsGraphql();
+    }
 
-    return parseResponse(response, 'Не вдалося завантажити список оголошень');
+    return getAdminListingsRest();
 }
 
 export async function toggleListingActive(id) {
-    const response = await fetch(`${LISTINGS_URL}/admin/${id}/toggle-active`, {
-        method: 'PATCH',
-        credentials: 'include',
-    });
+    if (getApiMode() === 'graphql') {
+        return toggleListingActiveGraphql(id);
+    }
 
-    return parseResponse(response, 'Не вдалося змінити статус оголошення');
+    return toggleListingActiveRest(id);
 }
 
 export async function getAdminUsers() {
-    const response = await fetch(`${LISTINGS_URL}/admin/users/all`, {
-        method: 'GET',
-        credentials: 'include',
-    });
+    if (getApiMode() === 'graphql') {
+        return getAdminUsersGraphql();
+    }
 
-    return parseResponse(response, 'Не вдалося завантажити список користувачів');
+    return getAdminUsersRest();
 }
 
 export async function getAdminStats() {
-    const response = await fetch(`${LISTINGS_URL}/admin/stats`, {
-        method: 'GET',
-        credentials: 'include',
-    });
+    if (getApiMode() === 'graphql') {
+        return getAdminStatsGraphql();
+    }
 
-    return parseResponse(response, 'Не вдалося завантажити статистику');
+    return getAdminStatsRest();
 }

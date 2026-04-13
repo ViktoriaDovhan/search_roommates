@@ -1,76 +1,110 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { getCurrentUser, logout } from '../services/authService';
+import ApiModeSwitch from './ApiModeSwitch';
 
 export default function UserLayout() {
     const user = getCurrentUser();
     const navigate = useNavigate();
 
-    const handleLogout = () => {
-        logout();
+    const handleLogout = async () => {
+        await logout();
         navigate('/');
     };
 
-    const getNavClass = ({ isActive }) => `nav-link ${isActive ? 'active' : ''}`;
+    const getNavClass = ({ isActive }) =>
+        `nav-link px-3 py-2 ${
+            isActive
+                ? 'fw-semibold text-dark bg-white rounded-pill'
+                : 'text-light bg-transparent'
+        }`;
 
     return (
-        <div className="app-shell">
-            <header className="site-header">
+        <>
+            <nav className="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
                 <div className="container">
-                    <div className="topbar">
-                        <div>
-                            <h1 className="brand-title">Search Roommates</h1>
-                            <p className="brand-subtitle">
-                                Пошук сусідів і створення власних оголошень
-                            </p>
-                        </div>
+                    <NavLink to="/" className="navbar-brand fw-bold">
+                        Search Roommates
+                    </NavLink>
 
-                        <nav className="nav-row">
-                            <NavLink to="/" className={getNavClass}>
-                                Головна
-                            </NavLink>
-                            <NavLink to="/listings" className={getNavClass}>
-                                Оголошення
-                            </NavLink>
-                            <NavLink to="/add-listing" className={getNavClass}>
-                                Додати оголошення
-                            </NavLink>
+                    <button
+                        className="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#mainNavbar"
+                    >
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+
+                    <div className="collapse navbar-collapse" id="mainNavbar">
+                        <ul className="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+                            <li className="nav-item">
+                                <NavLink to="/" end className={getNavClass}>
+                                    Головна
+                                </NavLink>
+                            </li>
+
+                            <li className="nav-item">
+                                <NavLink to="/listings" className={getNavClass}>
+                                    Оголошення
+                                </NavLink>
+                            </li>
+
+                            <li className="nav-item">
+                                <NavLink to="/add-listing" className={getNavClass}>
+                                    Додати оголошення
+                                </NavLink>
+                            </li>
 
                             {user ? (
                                 <>
-                                    <NavLink to="/my-profile" className={getNavClass}>
-                                        Мій профіль
-                                    </NavLink>
+                                    <li className="nav-item">
+                                        <NavLink to="/my-profile" className={getNavClass}>
+                                            Мій профіль
+                                        </NavLink>
+                                    </li>
 
                                     {user.role === 'admin' && (
-                                        <NavLink to="/admin" className={getNavClass}>
-                                            Адмінка
-                                        </NavLink>
+                                        <li className="nav-item">
+                                            <NavLink to="/admin" className={getNavClass}>
+                                                Адмінка
+                                            </NavLink>
+                                        </li>
                                     )}
-
-                                    <button className="btn btn-danger" onClick={handleLogout}>
-                                        Вийти
-                                    </button>
                                 </>
                             ) : (
                                 <>
-                                    <NavLink to="/login" className={getNavClass}>
-                                        Вхід
-                                    </NavLink>
-                                    <NavLink to="/register" className={getNavClass}>
-                                        Реєстрація
-                                    </NavLink>
+                                    <li className="nav-item">
+                                        <NavLink to="/login" className={getNavClass}>
+                                            Вхід
+                                        </NavLink>
+                                    </li>
+
+                                    <li className="nav-item">
+                                        <NavLink to="/register" className={getNavClass}>
+                                            Реєстрація
+                                        </NavLink>
+                                    </li>
                                 </>
                             )}
-                        </nav>
+                        </ul>
+
+                        <div className="d-flex align-items-center gap-3">
+                            <ApiModeSwitch />
+
+                            {user && (
+                                <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>
+                                    Вийти
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </header>
+            </nav>
 
-            <main className="main-content">
-                <div className="container">
-                    <Outlet />
-                </div>
+            <main className="container py-4">
+                <h1 className="h3 mb-4">Пошук сусідів і створення власних оголошень</h1>
+                <Outlet />
             </main>
-        </div>
+        </>
     );
 }

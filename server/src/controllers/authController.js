@@ -28,24 +28,19 @@ async function register(req, res) {
             role: 'user',
             verificationToken,
             isVerified: false,
+            isActive: true,
         });
 
-        const verifyLink = `${process.env.SERVER_URL}/api/auth/verify/${verificationToken}`;
-
-        await transporter.sendMail({
-            from: process.env.SMTP_FROM,
-            to: user.email,
-            subject: 'Verify your email',
-            html: `
-        <h2>Search Roommates</h2>
-        <p>Hello, ${user.firstName}!</p>
-        <p>Click the link below to verify your email:</p>
-        <a href="${verifyLink}">${verifyLink}</a>
-      `,
-        });
+        const verificationLink = `${process.env.SERVER_URL}/api/auth/verify/${verificationToken}`;
 
         return res.status(201).json({
-            message: 'Registration successful. Check your email to verify your account.',
+            message: 'Registration successful',
+            verificationToken,
+            verificationLink,
+            user: {
+                id: user.id,
+                email: user.email
+            }
         });
     } catch (error) {
         return res.status(500).json({ message: 'Registration error', error: error.message });
